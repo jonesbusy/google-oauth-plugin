@@ -22,6 +22,7 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.common.collect.ImmutableList;
 import com.google.jenkins.plugins.credentials.domains.DomainRequirementProvider;
+import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
@@ -147,6 +148,20 @@ public abstract class GoogleRobotCredentials implements GoogleOAuth2Credentials 
       listBox.add(name, credentials.getId());
     }
     return listBox;
+  }
+
+  /** Retrieves the {@link GoogleRobotCredentials} identified by {@code id}. */
+  public static GoogleRobotCredentials getById(String id, Item item) {
+    Iterable<GoogleRobotCredentials> allGoogleCredentials =
+        CredentialsProvider.lookupCredentials(
+            GoogleRobotCredentials.class, item, ACL.SYSTEM, Collections.emptyList());
+
+    for (GoogleRobotCredentials credentials : allGoogleCredentials) {
+      if (credentials.getId().equals(id)) {
+        return credentials;
+      }
+    }
+    return null;
   }
 
   /** Retrieves the {@link GoogleRobotCredentials} identified by {@code id}. */
